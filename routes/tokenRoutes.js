@@ -1,3 +1,3 @@
 const express = require('express');
-// Controller import
+const TokenController = require('../controllers/TokenController');
 const router = express.Router();

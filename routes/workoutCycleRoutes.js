@@ -1,3 +1,3 @@
 const express = require('express');
-// Controller import
+const WorkoutCycleController = require('../controllers/WorkoutCycleController');
 const router = express.Router();
