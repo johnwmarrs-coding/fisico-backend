@@ -1,9 +1,9 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var mongoose = require('mongoose');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const mongoose = require('mongoose');
 
 // Connect to db
 const uri = "mongodb+srv://fisico:1234@fisico.pi8ot.mongodb.net/fisico-db?retryWrites=true&w=majority";
@@ -14,9 +14,11 @@ mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true}, functio
 });
 
 // Import routes
-var indexRouter = require('./routes/index'); // TODO: Remove later
-// var usersRouter = require('./routes/users'); // TODO: Remove later
-var userRouter = require('./routes/userRoutes');
+const indexRouter = require('./routes/index'); // TODO: Remove later
+const userRouter = require('./routes/userRoutes');
+const tokenRouter = require('./routes/tokenRoutes');
+const workoutRouter = require('./routes/workoutRoutes');
+const workoutCycleRouter = require('./routes/workoutCycleRoutes');
 
 var app = express();
 
@@ -32,6 +34,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter); // TODO: Remove later
 app.use('/user', userRouter);
+app.use('/token', tokenRouter);
+app.use('/workout', workoutRouter);
+app.use('/workoutCycle', workoutCycleRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -50,7 +55,3 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-// module.exports = User;
-// module.exports = Token;
-// module.exports = Workout;
-// module.exports = WorkoutCycle;
