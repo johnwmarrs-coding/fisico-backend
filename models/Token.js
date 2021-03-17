@@ -1,8 +1,12 @@
-class Token {
-    constructor(token_hash, created, user, expiration_date) {
-        this.token_hash = token_hash;
-        this.created = created;
-        this.user = user;
-        this.expiration_date = expiration_date;
-    }
-}
+const mongoose = require('mongoose');
+
+const TokenSchema = mongoose.Schema({
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    token_hash: String,
+    created_at: Date,
+    expiration_date: Date
+});
+
+var Token = mongoose.model('Token', TokenSchema);
+
+module.exports = Token;
