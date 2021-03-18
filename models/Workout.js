@@ -7,6 +7,7 @@ const WorkoutSchema = mongoose.Schema({
     workout_type: { type: String, enum: ['Distance', 'Weight Lifting', 'Rest'] },
     date: Date,
     start_time: Date,
+    completed: { type: Boolean, default: false },
     plan: [mongoose.Schema.Types.Mixed],
     results: [mongoose.Schema.Types.Mixed]
 });
