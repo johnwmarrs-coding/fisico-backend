@@ -14,7 +14,6 @@ mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true}, functio
 });
 
 // Import routes
-const indexRouter = require('./routes/index'); // TODO: Remove later
 const userRouter = require('./routes/userRoutes');
 const tokenRouter = require('./routes/tokenRoutes');
 const workoutRouter = require('./routes/workoutRoutes');
@@ -22,17 +21,12 @@ const workoutCycleRouter = require('./routes/workoutCycleRoutes');
 
 var app = express();
 
-// view engine setup // TODO: Remove later
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter); // TODO: Remove later
 app.use('/user', userRouter);
 app.use('/token', tokenRouter);
 app.use('/workout', workoutRouter);
