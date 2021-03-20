@@ -20,7 +20,7 @@ router.post('/', async function (req, res, next) {
     const { success, msg, token } = await TokenController.createToken(req.body);
 
     if (!success || !token) {
-        console.error(`Failed to create new token for user ID ${token.user_id}`);
+        console.error("Failed to create new token");
         res.status(400);
     } else {
         res.status(201);
@@ -35,7 +35,7 @@ router.put('/:user_id', async function (req, res, next) {
     const { success, msg, token } = await TokenController.updateToken(user_id, req.body);
 
     if (!success || !token) {
-        console.error(`Failed to update token for user ID ${token.user_id}`);
+        console.error(`Failed to update token for user ID ${user_id}`);
         res.status(400);
     }
 

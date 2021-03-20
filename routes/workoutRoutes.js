@@ -30,7 +30,7 @@ router.post('/', async function (req, res, next) {
     const { success, msg, workout } = await WorkoutController.createWorkout(req.body);
 
     if (!success || !workout) {
-        console.error(`Failed to create new workout for user ID ${workout.user_id}`);
+        console.error("Failed to create new workout");
         res.status(400);
     } else {
         res.status(201);
@@ -40,12 +40,13 @@ router.post('/', async function (req, res, next) {
 });
 
 // Update workout
-router.put('/:user_id/:workout_id', async function (req, res, next) {
-    const { user_id, workout_id } = req.params;
+router.put('/:user_id', async function (req, res, next) {
+    const { user_id } = req.params;
+    const workout_id = req.query.workout_id;
     const { success, msg, workout } = await WorkoutController.updateWorkout(user_id, workout_id, req.body);
 
     if (!success || !workout) {
-        console.error(`Failed to update workout for user ID ${workout.user_id}`);
+        console.error(`Failed to update workout for user ID ${user_id}`);
         res.status(400);
     }
 
@@ -53,12 +54,13 @@ router.put('/:user_id/:workout_id', async function (req, res, next) {
 });
 
 // Delete workout
-router.delete('/user_id/:workout_id', async function (req, res, next) {
+router.delete('/user_id/', async function (req, res, next) {
     const { user_id } = req.params;
-    const { success, msg, workout } = await WorkoutController.deleteWorkout(user_id);
+    const workout_id = req.query.workout_id;
+    const { success, msg, workout } = await WorkoutController.deleteWorkout(user_id, workout_id);
 
     if (!success || !workout) {
-        console.error(`Failed to delete workout for user with ID ${user_id}`);
+        console.error(`Failed to delete workout with ID ${workout_id}`);
         res.status(400);
     }
 
