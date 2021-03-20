@@ -8,13 +8,13 @@ const getByID = async (id) => {
         user = await User.findById(id).exec();
 
         if (!user) {
-            msg = "User not found";
+            msg = `User not found with ID ${id}`;
         } else {
             success = true;
             msg = "Found user";
         }
     } catch (err) {
-        msg = "User not found";
+        msg = `User not found with ID ${id}`;
     }
 
     return {

@@ -48,6 +48,30 @@ const getCompletedWorkoutsByUserID = async (user_id) => {
     };
 }
 
+const getWorkoutByID = async (id) => {
+    let workout, msg;
+    let success = false;
+
+    try {
+        workout = await Workout.findById(id).exec();
+
+        if (!user) {
+            msg = `Failed to find workout with ID ${id}`;
+        } else {
+            success = true;
+            msg = "Found workout";
+        }
+    } catch (err) {
+        msg = `Failed to find workout with ID ${id}`;
+    }
+
+    return {
+        workout,
+        msg,
+        success
+    };
+}
+
 const createWorkout = async (workout_body) => {
     let workout, msg;
     let success = false;
@@ -125,6 +149,7 @@ const deleteWorkout = async (user_id, workout_id) => {
 module.exports = {
     getByUserID,
     getCompletedWorkoutsByUserID,
+    getWorkoutByID,
     createWorkout,
     updateWorkout,
     deleteWorkout
