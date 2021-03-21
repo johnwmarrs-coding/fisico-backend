@@ -1,4 +1,8 @@
 const User = require('../models/User');
+const Token = require('../models/Token');
+const TokenController = require('../controllers/TokenController');
+const sha256 = require('js-sha256');
+const { token } = require('morgan');
 
 const getByID = async (id) => {
     let user, msg;
@@ -25,10 +29,12 @@ const getByID = async (id) => {
 }
 
 const createUser = async (user_body) => {
-    let user, msg;
+    let user, msg, token_hash;
     let success = false;
 
     try {
+        user_body.password_hash = sha256(user_body.password_hash);
+
         user = new User(user_body);
 
         const doc = await user.save();
@@ -38,6 +44,14 @@ const createUser = async (user_body) => {
         } else {
             success = true;
             msg = `New user ${doc.username} created`;
+
+            token_hash = sha256(doc.password_hash + doc.createdAt);
+            let token_body = {
+                "user_id": doc.user_id,
+                "token_hash": token_hash
+            }
+
+            TokenController.createToken(token_body);
         }
     } catch (err) {
         msg = "Failed to create new user";
@@ -45,6 +59,7 @@ const createUser = async (user_body) => {
 
     return {
         user,
+        token_hash,
         msg,
         success
     };

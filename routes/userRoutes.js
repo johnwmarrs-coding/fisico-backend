@@ -15,9 +15,9 @@ router.get('/:user_id', async function (req, res, next) {
     res.json({ success, msg, user });
 });
 
-// Create user
-router.post('/', async function(req, res, next) {
-    const { success, msg, user } = await UserController.createUser(req.body);
+// Create user (sign-up)
+router.post('/signup', async function(req, res, next) {
+    const { success, msg, token_hash, user } = await UserController.createUser(req.body);
 
     if (!success || !user) {
         console.error("Failed to create new user");
@@ -26,7 +26,7 @@ router.post('/', async function(req, res, next) {
         res.status(201);
     }
 
-    res.json({ success, msg, user });
+    res.json({ success, msg, token_hash });
 });
 
 // Update user
