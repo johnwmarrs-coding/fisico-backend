@@ -3,8 +3,8 @@ const UserController = require('../controllers/UserController');
 const router = express.Router();
 
 // Get user
-router.get('/:user_id', async function (req, res, next) {
-    const { user_id } = req.params;
+router.get('/', async function (req, res, next) {
+    const user_id = req.query.user_id;
     const { success, msg, user } = await UserController.getByID(user_id);
 
     if (!success || !user) {
@@ -30,8 +30,8 @@ router.post('/signup', async function(req, res, next) {
 });
 
 // Update user
-router.put('/:user_id', async function(req, res, next) {
-    const { user_id } = req.params;
+router.put('/', async function(req, res, next) {
+    const user_id = req.query.user_id;
     const { success, msg, user } = await UserController.updateUser(user_id, req.body);
 
     if (!success || !user) {
@@ -43,8 +43,8 @@ router.put('/:user_id', async function(req, res, next) {
 });
 
 // Delete user
-router.delete('/:user_id', async function(req, res, next) {
-    const { user_id } = req.params;
+router.delete('/', async function(req, res, next) {
+    const user_id = req.query.user_id;
     const { success, msg, user } = await UserController.deleteUser(user_id);
 
     if (!success || !user) {
@@ -54,5 +54,18 @@ router.delete('/:user_id', async function(req, res, next) {
 
     res.json({ success, msg, user });
 });
+
+// User login
+router.get('/login', async function(req, res, next) {
+    const { email, password_hash } = req.body;
+    const { success, msg, token_hash, user } = await UserController.login(email, password_hash);
+
+    if (!success || !user) {
+        console.error(`Login failed for user with email ${email}`);
+        res.status(400);
+    }
+
+    res.json({ success, msg, token_hash });
+})
 
 module.exports = router;

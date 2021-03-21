@@ -47,13 +47,14 @@ const createUser = async (user_body) => {
 
             token_hash = sha256(doc.password_hash + doc.createdAt);
             let token_body = {
-                "user_id": doc.user_id,
+                "user_id": doc._id,
                 "token_hash": token_hash
             }
 
-            TokenController.createToken(token_body);
+            const data = await TokenController.createToken(token_body);
         }
     } catch (err) {
+        success = false;
         msg = "Failed to create new user";
     }
 
@@ -113,9 +114,45 @@ const deleteUser = async (id) => {
     };
 }
 
+const login = async (email, password_hash) => {
+    let user, msg, token_hash;
+    let success = false;
+
+    try {
+        user = await User.findOne({ email: email }).exec();
+
+        if (!user) {
+            msg = "Login failed"
+        } else {
+            password_hash = sha256(password_hash);
+
+            if (password_hash === user.password_hash) {
+                success = true;
+                msg = "Login successful";
+
+                const data = await TokenController.getByUserID(user._id);
+                token_hash = data.token.token_hash;
+            } else {
+                msg = "Incorrect password";
+            }
+        }
+    } catch (err) {
+        success = false;
+        msg = "Login failed"
+    }
+
+    return {
+        user,
+        token_hash,
+        msg,
+        success
+    }
+}
+
 module.exports = {
     getByID,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    login
 };
