@@ -55,7 +55,7 @@ const getWorkoutByID = async (id) => {
     try {
         workout = await Workout.findById(id).exec();
 
-        if (!user) {
+        if (!workout) {
             msg = `Failed to find workout with ID ${id}`;
         } else {
             success = true;
