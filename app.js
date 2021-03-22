@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 // Connect to db
 const uri = "mongodb+srv://fisico:1234@fisico.pi8ot.mongodb.net/fisico-db?retryWrites=true&w=majority";
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors);
 
 app.use('/user', userRouter);
 app.use('/token', tokenRouter);
