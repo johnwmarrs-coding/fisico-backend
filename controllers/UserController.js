@@ -2,7 +2,6 @@ const User = require('../models/User');
 const Token = require('../models/Token');
 const TokenController = require('../controllers/TokenController');
 const sha256 = require('js-sha256');
-const { token } = require('morgan');
 
 const getByID = async (id) => {
     let user, msg;
