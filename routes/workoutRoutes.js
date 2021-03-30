@@ -6,8 +6,24 @@ const router = express.Router();
 router.get('/:user_id', async function (req, res, next) {
     const { user_id } = req.params;
     let data;
+    // if statement kicks in even if completed is false
+    // add days query, grab within a set of days
+    let completed = req.query.completed;
+    // console.log(comp)
+    if (req.query.sync)
+    {
+        let sync = req.query.sync;
+        if(sync == "true")
+        {
+            data = await WorkoutController.getsyncstart(user_id);
+        }
+        else if(sync == "false")
+        {
+            data = await WorkoutController.getplannedahead(user_id);
+        }
 
-    if (!req.query.completed) {
+    }
+    else if ("false" == completed) {
         data = await WorkoutController.getByUserID(user_id);
     } else {
         data = await WorkoutController.getCompletedWorkoutsByUserID(user_id);
