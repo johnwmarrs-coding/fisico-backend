@@ -4,12 +4,18 @@ const router = express.Router();
 
 // Get workout(s)
 router.post('/get', async function (req, res, next) {
-    const { user_id, sync, completed } = req.body;
+    const { user_id, sync, completed, days, past } = req.body;
     let data;
     // if statement kicks in even if completed is false
     // add days query, grab within a set of days
     // console.log(comp)
-    if (sync != "empty")
+    let num_day = parseInt(days, 10);
+    if(num_day > 0)
+    {
+        let Past = (past == 'true');
+        data = await WorkoutController.getdays(user_id, num_day, Past);
+    }
+    else if (sync == "true" || sync == "false")
     {
         if(sync == "true")
         {

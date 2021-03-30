@@ -194,6 +194,37 @@ const getplannedahead = async (user_id) => {
     };
 }
 
+const getdays = async (user_id, days, past) => {
+    let workout, msg;
+    let success = false;
+
+    try {
+        if (past)
+        {
+            workout = await Workout.find({ user_id: user_id, date: {$lt: new Date(), $gt: new Date(new Date().getTime() - (24*60*60*1000*days))}}).exec();
+        }
+        else 
+        {
+            workout = await Workout.find({ user_id: user_id, date: {$lt: new Date(new Date().getTime() + (24*60*60*1000*days)), $gt: new Date()}}).exec();
+        }
+
+        if (!workout) {
+            msg = "Workout(s) not found in the last 14 days";
+        } else {
+            success = true;
+            msg = `Found workout(s) for user ID ${user_id} but they did not meet criteria.`;
+        }
+    } catch (err) {
+        msg = "Workout(s) not found";
+    }
+
+    return {
+        workout,
+        msg,
+        success,
+    };
+}
+
 
 module.exports = {
     getByUserID,
@@ -203,5 +234,6 @@ module.exports = {
     updateWorkout,
     deleteWorkout,
     getsyncstart,
-    getplannedahead
+    getplannedahead,
+    getdays
 }
