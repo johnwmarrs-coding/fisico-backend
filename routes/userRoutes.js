@@ -61,7 +61,7 @@ router.delete('/', async function(req, res, next) {
 });
 
 // User login
-router.get('/login', async function(req, res, next) {
+router.post('/login', async function(req, res, next) {
     const { email, password_hash } = req.body;
     const { success, msg, token_hash, user } = await UserController.login(email, password_hash);
 

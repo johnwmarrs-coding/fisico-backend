@@ -29,6 +29,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 app.use('/user', userRouter);
 app.use('/token', tokenRouter);
 app.use('/workout', workoutRouter);

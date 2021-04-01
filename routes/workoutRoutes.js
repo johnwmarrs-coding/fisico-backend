@@ -3,13 +3,33 @@ const WorkoutController = require('../controllers/WorkoutController');
 const router = express.Router();
 
 // Get workout(s)
-router.get('/:user_id', async function (req, res, next) {
-    const { user_id } = req.params;
+router.post('/get', async function (req, res, next) {
+    const { user_id, sync, completed, days, past } = req.body;
     let data;
+    // if statement kicks in even if completed is false
+    // add days query, grab within a set of days
+    // console.log(comp)
+    let num_day = parseInt(days, 10);
+    if(num_day > 0)
+    {
+        let Past = (past == 'true');
+        data = await WorkoutController.getdays(user_id, num_day, Past);
+    }
+    else if (sync == "true" || sync == "false")
+    {
+        if(sync == "true")
+        {
+            data = await WorkoutController.getsyncstart(user_id);
+        }
+        else if(sync == "false")
+        {
+            data = await WorkoutController.getplannedahead(user_id);
+        }
 
-    if (!req.query.completed) {
+    }
+    else if ("false" == completed) {
         data = await WorkoutController.getByUserID(user_id);
-    } else {
+    } else if ("true" == completed){
         data = await WorkoutController.getCompletedWorkoutsByUserID(user_id);
     }
 

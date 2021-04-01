@@ -33,6 +33,7 @@ router.post('/', async function (req, res, next) {
 // Update workout cycle
 router.put('/:user_id', async function (req, res, next) {
     const { user_id } = req.params;
+    // update workoutCycle
     const workoutCycle_id = req.query.workout_id;
     const { success, msg, workoutCycle } = await WorkoutCycleController.updateWorkoutCycle(user_id, workoutCycle_id, req.body);
 
@@ -44,11 +45,12 @@ router.put('/:user_id', async function (req, res, next) {
     res.json({ success, msg, workoutCycle });
 });
 
-// Delete workout cycle
+// Delete workout cycle 
+// needs to be updated
 router.delete('/user_id', async function (req, res, next) {
     const { user_id } = req.params;
-    const workoutCycle_id = req.query.workout_id;
-    const { success, msg, workoutCycle } = await WorkoutController.deleteWorkout(user_id, workoutCycle_id);
+    const workoutCycle_id = req.query.workout_id; 
+    const { success, msg, workoutCycle } = await WorkoutCycleController.deleteWorkout(user_id, workoutCycle_id);
 
     if (!success || !workoutCycle) {
         console.error(`Failed to delete workoutCycle with ID ${workoutCycle_id}`);
