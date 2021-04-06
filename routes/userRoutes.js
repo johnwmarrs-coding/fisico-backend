@@ -26,7 +26,12 @@ router.post('/signup', async function(req, res, next) {
         res.status(201);
     }
 
-    res.json({ success, msg, token_hash });
+    let data = {
+        token_hash,
+        "user_id": user._id
+    }
+
+    res.json({ success, msg, data });
 });
 
 // Update user
@@ -56,7 +61,7 @@ router.delete('/', async function(req, res, next) {
 });
 
 // User login
-router.get('/login', async function(req, res, next) {
+router.post('/login', async function(req, res, next) {
     const { email, password_hash } = req.body;
     const { success, msg, token_hash, user } = await UserController.login(email, password_hash);
 
@@ -65,7 +70,12 @@ router.get('/login', async function(req, res, next) {
         res.status(400);
     }
 
-    res.json({ success, msg, token_hash });
+    let data = {
+        token_hash,
+        "user_id": user._id
+    }
+
+    res.json({ success, msg, data });
 })
 
 module.exports = router;
