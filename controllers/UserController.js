@@ -102,6 +102,8 @@ const deleteUser = async (id) => {
         } else {
             success = true;
             msg = `User ${user.username} deleted`;
+
+            await TokenController.deleteToken(id);
         }
     } catch (err) {
         msg = "Failed to delete user";

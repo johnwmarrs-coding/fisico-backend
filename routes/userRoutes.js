@@ -3,7 +3,7 @@ const UserController = require('../controllers/UserController');
 const router = express.Router();
 
 // Get user
-router.get('/', async function (req, res, next) {
+router.post('/', async function (req, res, next) {
     const { user_id } = req.body;
     const { success, msg, user } = await UserController.getByID(user_id);
 
