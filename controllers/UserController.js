@@ -130,8 +130,19 @@ const login = async (email, password_hash) => {
                 success = true;
                 msg = "Login successful";
 
-                const data = await TokenController.getByUserID(user._id);
-                token_hash = data.token.token_hash;
+                let token = await TokenController.getByUserID(user._id);
+                if (!token) {
+                    token_hash = sha256(doc.password_hash + Date.now());
+                    let token_body = {
+                        "user_id": doc._id,
+                        "token_hash": token_hash
+                    }
+
+                    const { token } = await TokenController.createToken(token_body);
+                    token_hash = token.token_hash;
+                }
+
+                token_hash = token.token_hash;
             } else {
                 msg = "Incorrect password";
             }
@@ -149,10 +160,38 @@ const login = async (email, password_hash) => {
     }
 }
 
+const logoff = async (user_id) => {
+    let token, msg;
+    let success = false;
+
+    try {
+        data = await TokenController.getByUserID(user_id );
+        token = data.token
+
+        if (!token) {
+            msg = "Logoff failed";
+        } else {
+            await TokenController.deleteToken(user_id);
+            success = true;
+            msg = `Logoff succeeded for user with ID ${user_id}`;
+        }
+    } catch (err) {
+        success = false;
+        msg = "Logoff failed";
+    }
+
+    return {
+        token,
+        msg,
+        success
+    }
+}
+
 module.exports = {
     getByID,
     createUser,
     updateUser,
     deleteUser,
-    login
+    login,
+    logoff
 };

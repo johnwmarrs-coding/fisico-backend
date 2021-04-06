@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Get user
 router.get('/', async function (req, res, next) {
-    const user_id = req.query.user_id;
+    const { user_id } = req.body;
     const { success, msg, user } = await UserController.getByID(user_id);
 
     if (!success || !user) {
@@ -36,8 +36,8 @@ router.post('/signup', async function(req, res, next) {
 
 // Update user
 router.put('/', async function(req, res, next) {
-    const user_id = req.query.user_id;
-    const { success, msg, user } = await UserController.updateUser(user_id, req.body);
+    const { user_id, update_fields } = req.body;
+    const { success, msg, user } = await UserController.updateUser(user_id, update_fields);
 
     if (!success || !user) {
         console.error("Failed to update user");
@@ -49,7 +49,7 @@ router.put('/', async function(req, res, next) {
 
 // Delete user
 router.delete('/', async function(req, res, next) {
-    const user_id = req.query.user_id;
+    const { user_id } = req.body;
     const { success, msg, user } = await UserController.deleteUser(user_id);
 
     if (!success || !user) {
@@ -76,6 +76,19 @@ router.post('/login', async function(req, res, next) {
     }
 
     res.json({ success, msg, data });
+})
+
+// User logoff
+router.post('/logoff', async function(req, res, next) {
+    const { user_id } = req.body;
+    const { success, msg, token } = await UserController.logoff(user_id);
+
+    if (!success || !token) {
+        console.error(`Logoff failed for user with ID ${user_id}`);
+        res.status(400);
+    }
+
+    res.json({ success, msg, token });
 })
 
 module.exports = router;
