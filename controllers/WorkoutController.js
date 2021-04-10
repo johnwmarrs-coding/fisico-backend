@@ -1,41 +1,32 @@
 const Workout = require('../models/Workout');
 
-const getByUserID = async (user_id) => {
+const getByUserID = async (user_id, completed = false, days = 0, past = null) => {
     let workout, msg;
     let success = false;
 
     try {
-        workout = await Workout.find({ user_id: user_id }).exec();
-
-        if (!workout) {
-            msg = "Workout(s) not found";
-        } else {
-            success = true;
-            msg = `Found workout(s) for user ID ${user_id}`;
+        if (days && past) { // Get past completed workouts from the last n days
+            console.log("Get past workouts");
+            workout = await Workout.find({ user_id: user_id, completed: true, date: { $gte: new Date(Date.now() - days * 24 * 60 * 60 * 1000) } }).exec();
+            msg = `Found completed workout(s) for user with ID ${user_id} from the past ${days} days`;
+        } else if (days && !past) { // Get future workouts that will happen in n days
+            console.log("Get future workouts");
+            workout = await Workout.find({ user_id: user_id, date: { $gte: new Date(Date.now() + days * 24 * 60 * 60 * 1000) } }).exec();
+            msg = `Found future workout(s) for user ID ${user_id} from the next ${days} days`;
+        } else if (completed) { // Get completed workouts
+            console.log("Get completed workouts");
+            workout = await Workout.find({ user_id: user_id, completed: true }).exec();
+            msg = `Found completed workout(s) for user ID ${user_id}`;
+        } else { // Get all workouts
+            console.log("Get all workouts");
+            workout = await Workout.find({ user_id: user_id }).exec();
+            msg = `Found all workout(s) for user ID ${user_id}`;
         }
-    } catch (err) {
-        msg = "Workout(s) not found";
-    }
-
-    return {
-        workout,
-        msg,
-        success,
-    };
-}
-
-const getCompletedWorkoutsByUserID = async (user_id) => {
-    let workout, msg;
-    let success = false;
-
-    try {
-        workout = await Workout.find({ user_id: user_id, completed: true }).exec();
 
         if (!workout) {
             msg = "Workout(s) not found";
         } else {
             success = true;
-            msg = `Found workout(s) for user ID ${user_id}`;
         }
     } catch (err) {
         msg = "Workout(s) not found";
@@ -85,7 +76,7 @@ const createWorkout = async (workout_body) => {
             msg = `Failed to create new workout for user ID ${workout.user_id}`;
         } else {
             success = true;
-            msg = `New workout for user ID ${workout.user_id} created`;
+            msg = `New workout for user with ID ${workout.user_id} created`;
         }
     } catch (err) {
         msg = `Failed to create new workout for user ID ${workout.user_id}`;
@@ -146,94 +137,10 @@ const deleteWorkout = async (user_id, workout_id) => {
     };
 }
 
-const getsyncstart = async (user_id) => {
-    let workout, msg;
-    let success = false;
-
-    try {
-        workout = await Workout.find({ user_id: user_id, date: {$lt: new Date(), $gt: new Date(new Date().getTime() - (24*60*60*1000*14))}}).exec();
-
-        if (!workout) {
-            msg = "Workout(s) not found in the last 14 days";
-        } else {
-            success = true;
-            msg = `Found workout(s) for user ID ${user_id} but they did not meet criteria.`;
-        }
-    } catch (err) {
-        msg = "Workout(s) not found";
-    }
-
-    return {
-        workout,
-        msg,
-        success,
-    };
-}
-
-const getplannedahead = async (user_id) => {
-    let workout, msg;
-    let success = false;
-
-    try {
-        workout = await Workout.find({ user_id: user_id, date: {$lt: new Date(new Date().getTime() + (24*60*60*1000*14)), $gt: new Date()}}).exec();
-
-        if (!workout) {
-            msg = "Workout(s) not found in the next 14 days";
-        } else {
-            success = true;
-            msg = `Found workout(s) for user ID ${user_id} but they did not meet criteria.`;
-        }
-    } catch (err) {
-        msg = "Workout(s) not found";
-    }
-
-    return {
-        workout,
-        msg,
-        success,
-    };
-}
-
-const getdays = async (user_id, days, past) => {
-    let workout, msg;
-    let success = false;
-
-    try {
-        if (past)
-        {
-            workout = await Workout.find({ user_id: user_id, date: {$lt: new Date(), $gt: new Date(new Date().getTime() - (24*60*60*1000*days))}}).exec();
-        }
-        else 
-        {
-            workout = await Workout.find({ user_id: user_id, date: {$lt: new Date(new Date().getTime() + (24*60*60*1000*days)), $gt: new Date()}}).exec();
-        }
-
-        if (!workout) {
-            msg = "Workout(s) not found in the last 14 days";
-        } else {
-            success = true;
-            msg = `Found workout(s) for user ID ${user_id} but they did not meet criteria.`;
-        }
-    } catch (err) {
-        msg = "Workout(s) not found";
-    }
-
-    return {
-        workout,
-        msg,
-        success,
-    };
-}
-
-
 module.exports = {
     getByUserID,
-    getCompletedWorkoutsByUserID,
     getWorkoutByID,
     createWorkout,
     updateWorkout,
-    deleteWorkout,
-    getsyncstart,
-    getplannedahead,
-    getdays
+    deleteWorkout
 }
