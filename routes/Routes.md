@@ -14,6 +14,19 @@ The basic return payload for each route is a JSON payload of the following form:
 }
 ```
 
+## Table of Contents
+
+- [User Routes](#user-routes)
+  - [Create](<#create-user-(Signup)---POST-`/user/signup`>)
+  - [Get](#Get-User---POST-`/user`)
+  - [Update](#Update-User---PUT-`/user`)
+  - [Delete](#Delete-User---DEL-`/user`)
+- [Workout Routes](#Workout-Routes)
+  - [Create](#Create-Workout---POST-`/workout`)
+  - [Get](#Get-Workout---POST-`/workout/get`)
+  - [Update](#Update-Workout---PUT-`/workout`)
+  - [Delete](#Delete-Workout---DEL-`/workout`)
+
 ## User Routes
 
 ### Create User (Signup) - POST `/user/signup`
