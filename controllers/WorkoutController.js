@@ -12,15 +12,15 @@ const getByUserID = async (user_id, completed = false, days = 0, past = null) =>
         } else if (days && !past) { // Get future workouts that will happen in n days
             console.log("Get future workouts");
             workout = await Workout.find({ user_id: user_id, date: { $gte: new Date(Date.now() + days * 24 * 60 * 60 * 1000) } }).exec();
-            msg = `Found future workout(s) for user ID ${user_id} from the next ${days} days`;
+            msg = `Found future workout(s) for user with ID ${user_id} from the next ${days} days`;
         } else if (completed) { // Get completed workouts
             console.log("Get completed workouts");
             workout = await Workout.find({ user_id: user_id, completed: true }).exec();
-            msg = `Found completed workout(s) for user ID ${user_id}`;
+            msg = `Found completed workout(s) for user with ID ${user_id}`;
         } else { // Get all workouts
             console.log("Get all workouts");
             workout = await Workout.find({ user_id: user_id }).exec();
-            msg = `Found all workout(s) for user ID ${user_id}`;
+            msg = `Found all workout(s) for user with ID ${user_id}`;
         }
 
         if (!workout) {
@@ -97,10 +97,10 @@ const updateWorkout = async (user_id, workout_id, update_fields) => {
         workout = await Workout.findOneAndUpdate({ _id: workout_id, user_id: user_id }, { $set: update_fields }, { new: true }).exec();
 
         if (!workout) {
-            msg = "Failed to update workout";
+            msg = `Failed to update workout with ID ${workout_id}`;
         } else {
             success = true;
-            msg = `Workout for user ID ${workout.user_id} updated`;
+            msg = `Workout with ID ${workout._id} updated`;
         }
     } catch (err) {
         msg = "Failed to update workout";
@@ -121,10 +121,10 @@ const deleteWorkout = async (user_id, workout_id) => {
         workout = await Workout.findOneAndDelete({ _id: workout_id, user_id: user_id }).exec()
 
         if (!workout) {
-            msg = `Failed to delete workout for user ID ${user_id}`;
+            msg = `Failed to delete workout with ID ${workout_id}`;
         } else {
             success = true;
-            msg = `Workout for user ID ${workout.user_id} deleted`;
+            msg = `Workout with ID ${workout._id} deleted`;
         }
     } catch (err) {
         msg = `Failed to delete workout for user ID ${user_id}`;
