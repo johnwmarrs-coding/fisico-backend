@@ -5,7 +5,6 @@ const router = express.Router();
 // Get workout(s)
 router.post('/get', async function (req, res, next) {
     let { user_id, completed, days, past } = req.body;
-    let data;
 
     if (completed == undefined) {
         completed = false;
