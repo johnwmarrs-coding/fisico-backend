@@ -26,6 +26,30 @@ const getByID = async (id) => {
     };
 }
 
+const getByEmail = async (email) => {
+    let user, msg;
+    let success = false;
+
+    try {
+        user = await User.findOne({ email: email }).exec();
+
+        if (!user) {
+            msg = `User not found with email ${email}`;
+        } else {
+            success = true;
+            msg = `Found user ${user.username}`;
+        }
+    } catch (err) {
+        msg = `User not found with email ${email}`;
+    }
+
+    return {
+        user,
+        msg,
+        success,
+    };
+}
+
 const createUser = async (user_body) => {
     let user, msg, token_hash;
     let success = false;
@@ -131,18 +155,13 @@ const login = async (email, password_hash) => {
                 success = true;
                 msg = "Login successful";
 
-                let token = await TokenController.getByUserID(user._id);
-                if (!token) {
-                    token_hash = sha256(doc.password_hash + Date.now());
-                    let token_body = {
-                        "user_id": doc._id,
-                        "token_hash": token_hash
-                    }
-
-                    const { token } = await TokenController.createToken(token_body);
-                    token_hash = token.token_hash;
+                token_hash = sha256(user.password_hash + Date.now());
+                let token_body = {
+                    "user_id": user._id,
+                    "token_hash": token_hash
                 }
 
+                const { token } = await TokenController.createToken(token_body);
                 token_hash = token.token_hash;
             } else {
                 msg = "Incorrect password";
@@ -190,6 +209,7 @@ const logoff = async (user_id) => {
 
 module.exports = {
     getByID,
+    getByEmail,
     createUser,
     updateUser,
     deleteUser,
