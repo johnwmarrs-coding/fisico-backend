@@ -40,13 +40,17 @@ const getByUserID = async (user_id, completed = false, days = 0, past = null) =>
 }
 
 const getWorkoutDurationAnalytics = async(user_id, days) => {
-    let list;
+    let list = [];
+    let workout;
     try {
+            //console.log(user_id, days);
             console.log("Get past workouts");
             workout = await Workout.find({ user_id: user_id, completed: true, date: { $gte: new Date(Date.now() - days * 24 * 60 * 60 * 1000) } }).exec();
+            //console.log(workout);
         if (!workout) {
             msg = "Workout(s) not found";
         } else {
+            msg = "Workout(s) found";
             success = true;
         }
     } 
@@ -58,29 +62,31 @@ const getWorkoutDurationAnalytics = async(user_id, days) => {
     {   
         let day_km = 0;
         for (var i = 0; i < workout[j].results.length; i++) { 
+            //console.log("prints distance ", workout[j].results[i].distance);
             if(workout[j].results[i].distance != null)
             {
-                if(workout[j].results[i].unit == "mi")
+                //console.log("prints units ",workout[j].results[i].units)
+                if(workout[j].results[i].units == "mi")
                 {
                     day_km += workout[j].results[i].distance/0.62137;
                 }
-                else if(workout[j].results[i].unit == "km")
+                else if(workout[j].results[i].units == "km")
                 {
                     day_km += workout[j].results[i].distance;
                 }
-                else if(workout[j].results[i].unit == "m")
+                else if(workout[j].results[i].units == "m")
                 {
                     day_km += workout[j].results[i].distance/1000;
                 }
             }
         }
         total_km += day_km;
-        list.push({ date: workout[j].date, distance: day_km, current_total_distance: total_km})
+        list.push({date: workout[j].date, distance: day_km, current_total_distance: total_km})
     }
     let data = {
         data_list: list,
-        distance_per_day: totalkm/days,
-        totalkm: totalkm
+        distance_per_day: total_km/days,
+        totalkm: total_km
     }
     
 
