@@ -28,6 +28,46 @@ router.post('/get', async function (req, res, next) {
     res.json({ success, msg, workout });
 });
 
+
+
+//get duration workout analytics
+router.post('/analytics/distance', async function (req, res, next) {
+    let { user_id, days} = req.body;
+
+    if (days == undefined) {
+        days = 0;
+    }
+
+    const { success, msg, data } = await WorkoutController.getWorkoutDistanceAnalytics(user_id, days);
+
+    if (!success) {
+        console.error(`Not able to find workout(s) belonging to user with ID ${user_id} to analyze`);
+        res.status(404);
+    }
+
+    res.json({ success, msg, data});
+});
+
+
+router.post('/analytics/lifts', async function (req, res, next) {
+    let { user_id, days} = req.body;
+
+    if (days == undefined) {
+        days = 0;
+    }
+
+    const { success, msg, data } = await WorkoutController.getWorkoutLiftsAnalytics(user_id, days);
+
+    if (!success) {
+        console.error(`Not able to find workout(s) belonging to user with ID ${user_id} to analyze`);
+        res.status(404);
+    }
+
+    res.json({ success, msg, data});
+});
+
+
+
 // Create workout
 router.post('/', async function (req, res, next) {
     const { success, msg, workout } = await WorkoutController.createWorkout(req.body);
