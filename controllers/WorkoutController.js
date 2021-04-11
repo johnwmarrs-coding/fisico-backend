@@ -39,6 +39,53 @@ const getByUserID = async (user_id, completed = false, days = 0, past = null) =>
     };
 }
 
+const getWorkoutDurationAnalytics = async(user_id, days) => {
+    let list;
+    try {
+            console.log("Get past workouts");
+            workout = await Workout.find({ user_id: user_id, completed: true, date: { $gte: new Date(Date.now() - days * 24 * 60 * 60 * 1000) } }).exec();
+        if (!workout) {
+            msg = "Workout(s) not found";
+        } else {
+            success = true;
+        }
+    } 
+    catch (err) {
+        msg = "Workout(s) not found";
+    }
+    let total_km = 0;
+    for (var j = 0; j < workout.length; j++)
+    {   
+        let day_km = 0;
+        for (var i = 0; i < workout[j].results.length; i++) { 
+            if(workout[j].results[i].distance != null)
+            {
+                if(workout[j].results[i].unit == "mi")
+                {
+                    day_km += workout[j].results[i].distance/0.62137;
+                }
+                else if(workout[j].results[i].unit == "km")
+                {
+                    day_km += workout[j].results[i].distance;
+                }
+                else if(workout[j].results[i].unit == "m")
+                {
+                    day_km += workout[j].results[i].distance/1000;
+                }
+            }
+        }
+        total_km += day_km;
+        list.push({ date: workout[j].date, distance: day_km, current_total_distance: total_km})
+    }
+    let data = {
+        data_list: list,
+        distance_per_day: totalkm/days,
+        totalkm: totalkm
+    }
+    
+
+    return {success, msg, data }
+}
 const getWorkoutByID = async (id) => {
     let workout, msg;
     let success = false;
@@ -142,5 +189,6 @@ module.exports = {
     getWorkoutByID,
     createWorkout,
     updateWorkout,
-    deleteWorkout
+    deleteWorkout,
+    getWorkoutDurationAnalytics
 }
