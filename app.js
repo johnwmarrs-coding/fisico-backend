@@ -19,6 +19,7 @@ const userRouter = require('./routes/userRoutes');
 const tokenRouter = require('./routes/tokenRoutes');
 const workoutRouter = require('./routes/workoutRoutes');
 const workoutCycleRouter = require('./routes/workoutCycleRoutes');
+const messageRouter = require('./routes/messageRoutes');
 
 var app = express();
 
