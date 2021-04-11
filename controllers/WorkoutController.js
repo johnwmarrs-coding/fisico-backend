@@ -39,7 +39,7 @@ const getByUserID = async (user_id, completed = false, days = 0, past = null) =>
     };
 }
 
-const getWorkoutDurationAnalytics = async(user_id, days) => {
+const getWorkoutDistanceAnalytics = async(user_id, days) => {
     let list = [];
     let workout;
     try {
@@ -89,9 +89,67 @@ const getWorkoutDurationAnalytics = async(user_id, days) => {
         totalkm: total_km
     }
     
-
     return {success, msg, data }
 }
+
+
+
+
+const getWorkoutLiftsAnalytics = async(user_id, days) => {
+    let list = [];
+    let workout;
+    try {
+            //console.log(user_id, days);
+            console.log("Get past workouts");
+            workout = await Workout.find({ user_id: user_id, completed: true, date: { $gte: new Date(Date.now() - days * 24 * 60 * 60 * 1000) } }).exec();
+            //console.log(workout);
+        if (!workout) {
+            msg = "Workout(s) not found";
+        } else {
+            msg = "Workout(s) found";
+            success = true;
+        }
+    } 
+    catch (err) {
+        msg = "Workout(s) not found";
+    }
+    let total_lift = 0;
+    for (var j = 0; j < workout.length; j++)
+    {   
+        let day_lift = 0;
+        for (var i = 0; i < workout[j].results.length; i++) { 
+            //console.log("prints distance ", workout[j].results[i].distance);
+            if(workout[j].results[i].weight != null)
+            {
+                //console.log("prints units ",workout[j].results[i].units)
+                if(workout[j].results[i].units == "lbs")
+                {
+                    day_lift += (workout[j].results[i].weight/2.205) * workout[j].results[i].num_sets * workout[j].results[i].num_reps;
+                }
+                else if(workout[j].results[i].units == "kg")
+                {
+                    day_lift += workout[j].results[i].weight * workout[j].results[i].num_sets * workout[j].results[i].num_reps;
+                }
+
+            }
+        }
+        total_lift += day_lift;
+        list.push({date: workout[j].date, weight: day_lift, current_total_weight: total_lift})
+    }
+    let data = {
+        data_list: list,
+        weight_per_day: total_lift/days,
+        totallift: total_lift
+    }
+    
+    return {success, msg, data }
+}
+
+
+
+
+
+
 const getWorkoutByID = async (id) => {
     let workout, msg;
     let success = false;
@@ -196,5 +254,6 @@ module.exports = {
     createWorkout,
     updateWorkout,
     deleteWorkout,
-    getWorkoutDurationAnalytics
+    getWorkoutDistanceAnalytics,
+    getWorkoutLiftsAnalytics
 }

@@ -31,14 +31,14 @@ router.post('/get', async function (req, res, next) {
 
 
 //get duration workout analytics
-router.post('/analytics/duration', async function (req, res, next) {
+router.post('/analytics/distance', async function (req, res, next) {
     let { user_id, days} = req.body;
 
     if (days == undefined) {
         days = 0;
     }
 
-    const { success, msg, data } = await WorkoutController.getWorkoutDurationAnalytics(user_id, days);
+    const { success, msg, data } = await WorkoutController.getWorkoutDistanceAnalytics(user_id, days);
 
     if (!success) {
         console.error(`Not able to find workout(s) belonging to user with ID ${user_id} to analyze`);
@@ -48,6 +48,23 @@ router.post('/analytics/duration', async function (req, res, next) {
     res.json({ success, msg, data});
 });
 
+
+router.post('/analytics/lifts', async function (req, res, next) {
+    let { user_id, days} = req.body;
+
+    if (days == undefined) {
+        days = 0;
+    }
+
+    const { success, msg, data } = await WorkoutController.getWorkoutLiftsAnalytics(user_id, days);
+
+    if (!success) {
+        console.error(`Not able to find workout(s) belonging to user with ID ${user_id} to analyze`);
+        res.status(404);
+    }
+
+    res.json({ success, msg, data});
+});
 
 
 
