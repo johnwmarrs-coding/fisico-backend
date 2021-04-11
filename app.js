@@ -8,7 +8,7 @@ const cors = require('cors');
 
 // Connect to db
 const uri = "mongodb+srv://fisico:1234@fisico.pi8ot.mongodb.net/fisico-db?retryWrites=true&w=majority";
-mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true}, function(err) {
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }, function(err) {
   if (err) console.log(err);
 
   console.log("Connection successful");

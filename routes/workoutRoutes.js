@@ -4,38 +4,21 @@ const router = express.Router();
 
 // Get workout(s)
 router.post('/get', async function (req, res, next) {
-    const { user_id, sync, completed, days, past } = req.body;
-    let data;
-    // if statement kicks in even if completed is false
-    // add days query, grab within a set of days
-    // console.log(comp)
-    let num_day = parseInt(days, 10);
-    if(num_day > 0)
-    {
-        let Past = (past == 'true');
-        data = await WorkoutController.getdays(user_id, num_day, Past);
-    }
-    else if (sync == "true" || sync == "false")
-    {
-        if(sync == "true")
-        {
-            data = await WorkoutController.getsyncstart(user_id);
-        }
-        else if(sync == "false")
-        {
-            data = await WorkoutController.getplannedahead(user_id);
-        }
+    let { user_id, completed, days, past } = req.body;
 
-    }
-    else if ("false" == completed) {
-        data = await WorkoutController.getByUserID(user_id);
-    } else if ("true" == completed){
-        data = await WorkoutController.getCompletedWorkoutsByUserID(user_id);
+    if (completed == undefined) {
+        completed = false;
     }
 
-    const success = data.success;
-    const msg = data.msg;
-    const workout = data.workout;
+    if (days == undefined) {
+        days = 0;
+    }
+
+    if (past == undefined) {
+        past = false;
+    }
+
+    const { success, msg, workout } = await WorkoutController.getByUserID(user_id, completed, days, past);
 
     if (!success || !workout) {
         console.error(`Not able to find workout(s) belonging to user with ID ${user_id}`);
@@ -60,10 +43,9 @@ router.post('/', async function (req, res, next) {
 });
 
 // Update workout
-router.put('/:user_id', async function (req, res, next) {
-    const { user_id } = req.params;
-    const workout_id = req.query.workout_id;
-    const { success, msg, workout } = await WorkoutController.updateWorkout(user_id, workout_id, req.body);
+router.put('/', async function (req, res, next) {
+    const { user_id, update_fields, workout_id } = req.body;
+    const { success, msg, workout } = await WorkoutController.updateWorkout(user_id, workout_id, update_fields);
 
     if (!success || !workout) {
         console.error(`Failed to update workout for user ID ${user_id}`);
@@ -74,9 +56,8 @@ router.put('/:user_id', async function (req, res, next) {
 });
 
 // Delete workout
-router.delete('/user_id/', async function (req, res, next) {
-    const { user_id } = req.params;
-    const workout_id = req.query.workout_id;
+router.delete('/', async function (req, res, next) {
+    const { user_id, workout_id } = req.body;
     const { success, msg, workout } = await WorkoutController.deleteWorkout(user_id, workout_id);
 
     if (!success || !workout) {
